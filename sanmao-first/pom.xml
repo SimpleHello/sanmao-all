@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>sanmao.all</groupId>
+    <artifactId>sanmao-all</artifactId>
+    <version>2016.7.4</version>
+  </parent>
+  <groupId>sanmao.first</groupId>
+  <artifactId>sanmao-first</artifactId>
+  <packaging>war</packaging>
+  <dependencies>
+    <dependency>
+        <groupId>sanmao.core</groupId>
+  		<artifactId>sanmao-core</artifactId>
+        <version>2016.7.4</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>sanmao-first</finalName>
+  </build>
+</project>

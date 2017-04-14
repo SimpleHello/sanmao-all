@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="test_student">
+<insert id="insert" parameterType="com.ui.entity.StudentEntity">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
+			select nextval('seq_fir_student')
+		</selectKey>
+		INSERT INTO fir_student(id,name,age,ctime)	
+			
+   		VALUES (
+   			#{id,jdbcType=INTEGER},
+			#{name,jdbcType=VARCHAR},
+			#{age,jdbcType=INTEGER},now())
+	</insert> 
+
+	<select id="queryAll" resultType="com.ui.entity.StudentEntity" parameterType="com.ui.entity.StudentEntity">
+		select id,name,age
+		from fir_student
+	</select>
+</mapper>

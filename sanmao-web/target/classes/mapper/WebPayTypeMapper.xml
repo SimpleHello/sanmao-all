@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="web_pay_type_config">
+<insert id="insertDetail" parameterType="com.ui.entity.pay.PayTypeEntity">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
+			select nextval('seq_pay_type_config')
+		</selectKey>
+		INSERT INTO pay_type_config(id,typename,fathertypeid,ctime)		
+   		VALUES (
+   			#{id,jdbcType=INTEGER},
+			#{name,jdbcType=VARCHAR},
+			#{faId,jdbcType=INTEGER},now())
+	</insert> 
+	
+	<update id="updateType" parameterType="com.ui.entity.pay.PayTypeEntity">
+			update pay_type_config set typename = #{name},fathertypeid=#{faId}
+			where id=#{id}
+	</update>
+	
+	<update id="deleteType" parameterType="com.ui.entity.pay.PayTypeEntity">
+			delete from  pay_type_config 
+			where id=#{id}
+	</update>
+	
+	<select id="getIfUsed" resultType="int" parameterType="com.ui.entity.pay.PayTypeEntity">
+		select count(1) from pay_detail where typeid=#{id}
+	</select>
+	<select id="getPayTypeList" resultType="com.ui.entity.pay.PayTypeEntity" parameterType="com.ui.entity.pay.PayTypeEntity">
+		SELECT t1.id,t1.typename as name,t1.fathertypeid as faId,t2.typename as faName 
+		FROM pay_type_config  t1 LEFT JOIN pay_type_config t2
+		ON t1.fathertypeid=t2.id
+		where 1=1
+	    <if test="faId != null and faId != 0 ">  
+            <![CDATA[  
+              AND t1.fathertypeid= #{faId}
+            ]]> 
+	    </if>
+	     <if test="name != null and name != '' ">  
+            <![CDATA[  
+              AND t1.typename like concat('%',#{name},'%') 
+            ]]> 
+	    </if>
+	</select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+  
+ 
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+      <list>
+     	<ref  local="studentJobTrigger"  />
+      </list>
+    </property>
+    <property name="waitForJobsToCompleteOnShutdown" value="false"></property>
+  </bean>
+  
+   <bean id="pageQuartz" class="com.web.Job.StudentJob"></bean>
+   <!-- 个人 全量 上报   每 5 秒 搞一次-->
+   <bean id="studentJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="pageQuartz" />
+		<property name="targetMethod" value="exe" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="studentJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="studentJob"></property>
+		<property name="cronExpression" value="0/5 * * * * ?"></property>
+	</bean>
+</beans>

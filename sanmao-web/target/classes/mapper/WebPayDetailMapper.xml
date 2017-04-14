@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="web_pay_detail">
+	<insert id="insertDetail" parameterType="com.ui.entity.pay.PayDetailEntity">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
+			select nextval('seq_pay_detail')
+		</selectKey>
+		INSERT INTO pay_detail(id, typeid, paynum, bake, paydate, ctime)		
+   		VALUES (
+   			#{id,jdbcType=INTEGER},
+			#{typeId,jdbcType=INTEGER},
+			#{payNum,jdbcType=DOUBLE},
+			#{bake,jdbcType=VARCHAR},
+			to_date(#{payDate,jdbcType=VARCHAR},'yyyy-MM-dd'),now())
+	</insert> 
+
+	<update id="updateDetail" >
+		update pay_detail 
+		 set  typeid=#{typeId},
+		 	  payNum=#{payNum},
+		 	  bake=#{bake},
+		 	  payDate=#{payDate}
+		 where id=#{id}	  
+	</update>
+	
+	<delete id="deleteDetail" >
+		delete from pay_detail where id=#{id}
+	</delete>
+	
+	<select id="getOnePayDetail" resultType="com.ui.entity.pay.PayDetailEntity" parameterType="com.ui.entity.pay.PayDetailEntity">
+		select id, typeid, paynum, bake, to_char(paydate,'yyyy-MM-dd') as paydate, ctime, rtime
+		from pay_detail where id=#{id}
+	</select>
+	
+	<select id="getPayDetailList" resultType="com.ui.entity.pay.PayDetailEntity" parameterType="com.ui.entity.pay.PayDetailEntity">
+		select t1.id,t1.paynum, t1.bake, to_char(t1.paydate,'yyyy-MM-dd') as paydate,
+			   t2.id as typeId,t2.typeName,
+			   t3.id as typeFaId,t3.typename as typeFaName
+		from pay_detail t1 
+		left join pay_type_config t2 
+		  on t1.typeid= t2.id
+		left join pay_type_config t3 
+		  ON t2.fathertypeid=t3.id   
+		<include refid="queryParam" />
+	    order by payDate desc,typeid
+	    limit #{limit} offset #{offset}
+	</select>
+	
+	<select id="getCount" resultType="int" parameterType="com.ui.entity.pay.PayDetailEntity"> 
+		select count(1)
+		from pay_detail t1 where 1=1
+		<include refid="queryParam" />
+	</select>
+	
+	<sql id="queryParam">
+			<if test="typeId != null and typeId != 0 ">  
+            <![CDATA[  
+              AND t1.typeId= #{typeId}
+            ]]> 
+	    </if>
+	     <if test="payMin != null and payMin != 0 ">  
+            <![CDATA[  
+              AND t1.paynum >=payMin
+            ]]> 
+	    </if>
+	     <if test="payMax != null and payMax != 0 ">  
+            <![CDATA[  
+              AND t1.paynum >=payMax
+            ]]> 
+	    </if>
+	     <if test="startDate != null and startDate != '' ">  
+            <![CDATA[  
+              AND t1.paydate >=to_date(startDate,'yyyy-MM-dd')
+            ]]> 
+	    </if>
+	     <if test="endDate != null and endDate != '' ">  
+            <![CDATA[  
+              AND t1.paydate <=to_date(endDate,'yyyy-MM-dd')
+            ]]> 
+	    </if>
+	     <if test="bake != null and bake != '' ">  
+            <![CDATA[  
+              AND t1.bake like concat('%',#{bake},'%') 
+            ]]> 
+	    </if>
+	</sql>
+</mapper>
